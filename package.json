@@ -1,0 +1,24 @@
+{
+  "name": "Empath---Back-End",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "knex": "knex"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/claudialigidakis/Empath---Back-End.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/claudialigidakis/Empath---Back-End/issues"
+  },
+  "homepage": "https://github.com/claudialigidakis/Empath---Back-End#readme",
+  "dependencies": {
+    "knex": "^0.14.6",
+    "pg": "^7.4.1"
+  }
+}
