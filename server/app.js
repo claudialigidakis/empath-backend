@@ -3,6 +3,11 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
 
+if(process.env.NODE_ENV !== 'production'){
+  require('dotenv').load()
+}
+
+
 const app = express()
 
 app.use(cors())
@@ -10,6 +15,7 @@ app.use(morgan('dev'))
 app.use(bodyParser.json())
 
 //routes
+app.use('/auth', require('./routes/auth'))
 app.use('/users', require('./routes/users'))
 app.use('/campaigns', require('./routes/campaigns'))
 
