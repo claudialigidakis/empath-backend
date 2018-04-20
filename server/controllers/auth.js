@@ -12,7 +12,7 @@ function login(req, res, next){
   // 2. Attempt Login
   authModel.login(req.body.username, req.body.password)
   .then(function(user){
-    const token = jwt.sign({id: user.id}, process.env.SECRET)
+    const token = jwt.sign({id: user.id, name: user.fname}, process.env.SECRET)
     return res.status(200).send({ token })
   })
   .catch(next)
@@ -20,7 +20,7 @@ function login(req, res, next){
 
 
 function getAuthStatus(req, res, next){
-    res.status(200).send({id:req.claim.id})
+    res.status(200).send(req.claim)
 }
 
 //////////////////////////////////////////////////////////////////////////////
