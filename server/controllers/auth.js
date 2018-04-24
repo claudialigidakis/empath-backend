@@ -12,10 +12,12 @@ function login(req, res, next){
   // 2. Attempt Login
   authModel.login(req.body.username, req.body.password)
   .then(function(user){
-    const token = jwt.sign({id: user.id, name: user.fname}, process.env.SECRET)
+    const token = jwt.sign({id: user.id, name: user.fname, user: user.username, lname: user.lname, email: user.email}, process.env.SECRET)
     return res.status(200).send({ token })
   })
-  .catch(next)
+  .catch(err=> {
+    console.log(err)
+  })
 }
 
 
@@ -28,7 +30,6 @@ function getAuthStatus(req, res, next){
 //////////////////////////////////////////////////////////////////////////////
 
 function isAuthenticated(req, res, next){
-console.log(req.headers.authorization)
   if(!req.headers.authorization){
     return next({ status: 401, message: 'Unauthorized' })
   }

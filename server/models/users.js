@@ -6,7 +6,13 @@ function getOneByUserName(username){
     db('users')
     .where({ username })
     .first()
+    // .then(console.log)
+    // .catch(console.log)
   )
+}
+
+function getOne(usersId){
+
 }
 
 function create(body){
@@ -33,6 +39,7 @@ function create(body){
   })
 }
 
+
 function update(usersId, body){
 
 }
@@ -41,4 +48,4 @@ function remove(usersId){
 
 }
 
-module.exports = {getOneByUserName, create, update, remove}
+module.exports = {getOne, getOneByUserName, create, update, remove}

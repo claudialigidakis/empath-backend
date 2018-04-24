@@ -1,16 +1,10 @@
 const userModel = require('../models/users')
 
-// function getOne(req, res, next){
-//   model.getOne(parseInt(req.params.usersId))
-//   .then(function(data){
-//     if(data) {
-//       return res.status(200).send({ data })
-//     }
-//     else {
-//       throw { status: 404, message: 'User Not Found' } }
-//   })
-//   .catch(next)
-// }
+
+function getOne(usersId){
+
+}
+
 
 function create(req, res, next){
   if(!req.body.username || !req.body.password || !req.body.fname || !req.body.lname || !req.body.email){
@@ -25,7 +19,7 @@ function create(req, res, next){
 }
 
 function update(req, res, next){
-  if(!req.body.name){
+  if(!req.body){
     return next({ status: 400, message:'Bad Request'})
   }
   model.update(parseInt(req.params.usersId), req.body)
@@ -43,4 +37,4 @@ function remove(req, res, next){
   .catch(next)
 }
 
-module.exports = {create, update, remove}
+module.exports = {getOne, create, update, remove}

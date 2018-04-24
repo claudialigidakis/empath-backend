@@ -1,7 +1,8 @@
 const model = require('../models/campaigns')
 
 function getOne(req, res, next){
-  model.getOne(parseInt(req.params.campaignsId))
+  console.log("Made it to get one")
+  model.getOne(parseInt(req.params.campaignsId), parseInt(req.params.usersId))
   .then(function(data){
     if(data) {
       return res.status(200).send({ data })
@@ -13,7 +14,7 @@ function getOne(req, res, next){
 }
 
 function getAll(req, res, next){
-  model.getAll()
+  model.getAll(parseInt(req.params.usersId))
   .then(function(data){
     res.status(200).send({data})
   })
@@ -21,18 +22,23 @@ function getAll(req, res, next){
 }
 
 function create(req, res, next){
-  if(!req.body.name){
+  console.log("made it to create")
+  if(!req.body.title || !req.body.description){
     return next({ status: 400, message:'Bad Request'})
   }
-  model.create(req.body.name)
+  model.create(req.body, req.params)
   .then(function(data){
-    res.status(201).send({ data })
+    console.log("made it back create")
+    // model.followedCamp(data[0].id, parseInt(req.params.usersId))
+    // .then({
+      res.status(201).send({ data })
+    // })
   })
   .catch(next)
 }
 
 function remove(req, res, next){
-  model.remove(parseInt(req.params.campaignsId))
+  model.remove(parseInt(req.params.campaignsId), parseInt(req.params.usersId))
   .then(function(data){
     res.status(200).send({ data })
   })
