@@ -6,13 +6,15 @@ function getOneByUserName(username){
     db('users')
     .where({ username })
     .first()
-    // .then(console.log)
-    // .catch(console.log)
   )
 }
 
 function getOne(usersId){
-
+  return (
+    db('users')
+    .where({ id: usersId })
+    .first()
+  )
 }
 
 function create(body){
@@ -39,13 +41,17 @@ function create(body){
   })
 }
 
-
-function update(usersId, body){
-
-}
-
 function remove(usersId){
-
+  console.log("made it to remove models")
+  let usersid = usersId
+  console.log(usersid)
+  return (
+    db('users')
+    .where({
+      id: usersid
+    })
+    .del()
+  )
 }
 
-module.exports = {getOne, getOneByUserName, create, update, remove}
+module.exports = {getOne, getOneByUserName, create, remove}

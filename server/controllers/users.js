@@ -1,8 +1,15 @@
 const userModel = require('../models/users')
 
 
-function getOne(usersId){
-
+function getOne(req, res, next){
+ if(!req.params.usersId) {
+   return next({ status: 400, message:'Bad Request'})
+ }
+ userModel.getOne(req.params.usersId)
+ .then(data =>{
+   delete data.password
+   res.status(200).send({ data })
+ })
 }
 
 
@@ -22,7 +29,7 @@ function update(req, res, next){
   if(!req.body){
     return next({ status: 400, message:'Bad Request'})
   }
-  model.update(parseInt(req.params.usersId), req.body)
+  userModel.update(parseInt(req.params.usersId), req.body)
   .then(function(data){
     res.status(200).send({ data })
   })
@@ -30,8 +37,10 @@ function update(req, res, next){
 }
 
 function remove(req, res, next){
-  model.remove(parseInt(req.params.usersId))
+    console.log("made it to controller")
+  userModel.remove(parseInt(req.params.usersId))
   .then(function(data){
+    console.log("back to controllers")
     res.status(200).send({ data })
   })
   .catch(next)

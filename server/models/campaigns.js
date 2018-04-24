@@ -6,23 +6,40 @@ function getOne(campaignsId, usersId) {
   let campaignsid = campaignsId
   let usersid = usersId
   return (
-    db('campaigns')
+    db('followed_campaigns')
     .where({
-      campaignsid
+      campaigns_id: campaignsId,
+      user_id: usersId
     })
     .first()
   )
 }
 
 function getAll(usersId) {
+  let usersid = usersId
   return (
-    db('campaigns')
+    db('followed_campaigns')
+    .innerJoin('campaigns', 'campaigns.id', 'followed_campaigns.campaigns_id')
+    .where({
+      user_id: usersId
+    })
   )
 }
 
-function remove(campaignsId, usersId) {
 
+function remove(campaignsId, usersId) {
+  let campaignsid = campaignsId
+  let usersid = usersId
+  return (
+    db('followed_campaigns')
+    .where({
+      campaigns_id: campaignsid,
+      user_id: usersid
+    })
+    .del()
+  )
 }
+
 
 function create(body, params) {
   let title = body.title
@@ -31,51 +48,63 @@ function create(body, params) {
   let hashtags = body.hashtags || []
   let userID = params.usersId
   let campaignsId;
-  db('campaigns')
+  return db('campaigns')
     .insert({
       title,
       description
     })
     .returning('*')
-    .then(function([campaign]){
-      console.log("made it inside of campaign")
-        campaignsId = campaign.id
-        // if (usernames) {
-        //   var userNamePromise = usernames.map(username => lib.twitterSearchUser(username))
-        // }
-        if (hashtags) {
-          var hashtagsPromise = hashtags.map(hashtag => lib.twitterSearchHashtag(hashtag))
+    .then(function([campaign]) {
+      campaignsId = campaign.id
+      if (hashtags) {
+        var hashtagsPromise = hashtags.map(hashtag => lib.twitterSearchHashtag(hashtag))
+        return Promise.all(hashtagsPromise)
+          .then(function(analyzeHashtagsMoods) {
+              const toInsert = analyzeHashtagsMoods.map(ele => ({
+                campaigns_id: campaignsId,
+                hashtagAnalysis: ele.response,
+                hashtag: ele.target
+              }))
+              // return analyzeHashtagsMoods
+              return db('hashtags').insert(toInsert)
+          })
         }
-        console.log(Promise.all(hashtagsPromise))
-      return Promise.all(hashtagsPromise)
+        else {
+          return Promise.resolve()
+        }
     })
-    .return(function(analyzeHashtagsMoods){
-        console.log("made it back inside of campaign")
-      // const toInsert = analyzeUsernameMoods.map(ele => ({
-      //   campaigns_id: campaignsId,
-      //   analysis: ,
-      //   username:
-      // }))
-      console.log(analyzeHashtagsMoods);
-      return analyzeHashtagsMoods
+    .then(function() {
+      if (usernames) {
+        var userNamePromise = usernames.map(username => lib.twitterSearchUser(username))
+        return Promise.all(userNamePromise)
+          .then(function(analyzeUsernameMoods) {
+              const toInsert = analyzeUsernameMoods.map(ele => ({
+                campaigns_id: campaignsId,
+                usernameAnalysis: ele.response,
+                username: ele.target
+              }))
+              // return analyzeHashtagsMoods
+              return db('usernames').insert(toInsert)
+          })
+        }
+        else {
+          return Promise.resolve()
+        }
     })
-    .catch(console.error)
-}
-
-function followedCamp(campId, userId) {
-  let is_owner = true
-  return db('followed_campaigns')
-  .insert({
-    is_owner,
-    userId,
-    campId
-  })
-  returning('*')
+    .then(function() {
+      console.log("made it to the end of models")
+      return db('followed_campaigns')
+        .insert({
+          is_owner: true,
+          user_id: userID,
+          campaigns_id: campaignsId
+        })
+        .returning('*')
+    })
 }
 
 
 module.exports = {
-  followedCamp,
   getOne,
   getAll,
   create,

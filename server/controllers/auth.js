@@ -43,7 +43,7 @@ function isAuthenticated(req, res, next){
   })
 }
 
-function isSelf(req, res, next){
+function isSelf(req, res, next) {
   if(parseInt(req.params.userId) !== req.claim.id){
     return next({ status: 401, message: 'Unauthorized' })
   }

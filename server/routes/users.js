@@ -5,9 +5,7 @@ const controller = require('../controllers/users')
 
 router.get('/:usersId', controller.getOne)
 router.post('/', controller.create)
-// router.put('/:usersId', controller.update)
-// router.delete('/:usersId', controller.remove)
-
+router.delete('/:usersId', controller.remove)
 
 
 //////////

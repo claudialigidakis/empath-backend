@@ -1,10 +1,10 @@
 const model = require('../models/campaigns')
 
 function getOne(req, res, next){
-  console.log("Made it to get one")
   model.getOne(parseInt(req.params.campaignsId), parseInt(req.params.usersId))
   .then(function(data){
     if(data) {
+      console.log("got my data back")
       return res.status(200).send({ data })
     }
     else {
@@ -28,16 +28,14 @@ function create(req, res, next){
   }
   model.create(req.body, req.params)
   .then(function(data){
-    console.log("made it back create")
-    // model.followedCamp(data[0].id, parseInt(req.params.usersId))
-    // .then({
+    console.log(data)
       res.status(201).send({ data })
-    // })
   })
   .catch(next)
 }
 
 function remove(req, res, next){
+  console.log("made it to controller")
   model.remove(parseInt(req.params.campaignsId), parseInt(req.params.usersId))
   .then(function(data){
     res.status(200).send({ data })
