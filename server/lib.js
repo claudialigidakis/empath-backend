@@ -19,14 +19,15 @@ const personality_insights = new PersonalityInsightsV3({
 
 
 function twitterSearchUser(screenName) {
-
-  return new Promise((resolve, reject) => {
     let userName = screenName
+    let contentItems = [];
+  return new Promise((resolve, reject) => {
+    console.log("made it to twitter hashtags")
     client.get('statuses/user_timeline', {
       screen_name: userName
     }, function(error, tweets, response) {
-      if (!error) {
-        let contentItems = [];
+      if (!error && tweets) {
+        console.log("made it to the if statement")
         // Loop through the tweets
         for (let i = 0; i < tweets.length; i++) {
           let tweet = tweets[i];
@@ -43,18 +44,19 @@ function twitterSearchUser(screenName) {
           "contentItems": contentItems,
           "consumption_preferences": true
         }, (err, response) => {
+          console.log("made it here")
           if (err) reject(err);
           resolve({
-            target: screen_name,
+            target: userName,
             response
           })
         })
       }
       if (error) {
+        console.log(error)
         reject(error)
       }
     })
-
   })
 }
 
@@ -62,12 +64,13 @@ function twitterSearchUser(screenName) {
 function twitterSearchHashtag(searchParam) {
   return new Promise((resolve, reject) => {
       let search = searchParam;
+      let contentItems = [];
+
       client.get('search/tweets', {
           q: `#${search}`
         }, function(error, tweets, response) {
-          if (error) reject(error);
-          let contentItems = [];
-          // Loop through the tweets
+          if (error || tweets == undefined) reject(error);
+          else {
           for (let i = 0; i < tweets.statuses.length; i++) {
             let tweet = tweets.statuses[i];
             contentItems.push({
@@ -77,7 +80,7 @@ function twitterSearchHashtag(searchParam) {
               "id": tweet.id,
               "language": tweet.metadata.iso_language_code
             });
-          }
+        }
           // Call Watson with the tweets
           personality_insights.profile({
             "contentItems": contentItems,
@@ -89,6 +92,7 @@ function twitterSearchHashtag(searchParam) {
               response
             })
           })
+        }
         if (error) {
           reject(error)
         }

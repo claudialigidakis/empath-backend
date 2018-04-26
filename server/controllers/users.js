@@ -10,6 +10,7 @@ function getOne(req, res, next){
    delete data.password
    res.status(200).send({ data })
  })
+ .catch(next)
 }
 
 

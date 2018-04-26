@@ -4,7 +4,7 @@ function getOne(req, res, next){
   model.getOne(parseInt(req.params.campaignsId), parseInt(req.params.usersId))
   .then(function(data){
     if(data) {
-      console.log("got my data back")
+      console.log("got my data back", data)
       return res.status(200).send({ data })
     }
     else {
@@ -28,10 +28,13 @@ function create(req, res, next){
   }
   model.create(req.body, req.params)
   .then(function(data){
-    console.log(data)
+      console.log("made it back to create")
       res.status(201).send({ data })
   })
-  .catch(next)
+  .catch(err => {
+    console.log(err);
+    return next(err);
+  })
 }
 
 function remove(req, res, next){

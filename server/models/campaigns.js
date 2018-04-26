@@ -5,13 +5,29 @@ const lib = require('../lib')
 function getOne(campaignsId, usersId) {
   let campaignsid = campaignsId
   let usersid = usersId
+  let data = {}
   return (
     db('followed_campaigns')
+    .innerJoin('campaigns', 'campaigns.id', 'followed_campaigns.campaigns_id')
+    // .leftJoin('hashtags', 'hashtags.campaigns_id', 'followed_campaigns.campaigns_id')
+    // .leftJoin('usernames', 'usernames.campaigns_id', 'followed_campaigns.campaigns_id')
     .where({
-      campaigns_id: campaignsId,
-      user_id: usersId
+      'followed_campaigns.campaigns_id': campaignsid,
+      'followed_campaigns.user_id': usersid
     })
-    .first()
+    .then(function([campaign]){
+
+      data.campaign = campaign
+
+      const hashtags = db('hashtags').where({campaigns_id: campaignsId})
+      const usernames = db('usernames').where({campaigns_id: campaignsId})
+      return Promise.all([hashtags, usernames])
+    })
+    .then(function([hashtags, usernames]){
+      data.hashtags = hashtags
+      data.usernames = usernames
+      return data
+    })
   )
 }
 
@@ -21,7 +37,7 @@ function getAll(usersId) {
     db('followed_campaigns')
     .innerJoin('campaigns', 'campaigns.id', 'followed_campaigns.campaigns_id')
     .where({
-      user_id: usersId
+      'followed_campaigns.user_id': usersid
     })
   )
 }
@@ -33,8 +49,7 @@ function remove(campaignsId, usersId) {
   return (
     db('followed_campaigns')
     .where({
-      campaigns_id: campaignsid,
-      user_id: usersid
+      'followed_campaigns.campaigns_id': campaignsid
     })
     .del()
   )
@@ -48,6 +63,10 @@ function create(body, params) {
   let hashtags = body.hashtags || []
   let userID = params.usersId
   let campaignsId;
+
+  hashtags = hashtags.filter(e => e.length > 0)
+  usernames = usernames.filter(e => e.length > 0)
+
   return db('campaigns')
     .insert({
       title,
@@ -56,8 +75,9 @@ function create(body, params) {
     .returning('*')
     .then(function([campaign]) {
       campaignsId = campaign.id
-      if (hashtags) {
-        var hashtagsPromise = hashtags.map(hashtag => lib.twitterSearchHashtag(hashtag))
+      if (hashtags && hashtags.length !== 0) {
+        console.log('hashtags', hashtags);
+        var hashtagsPromise = hashtags.map(hashtag => lib.twitterSearchHashtag(hashtag.trim()))
         return Promise.all(hashtagsPromise)
           .then(function(analyzeHashtagsMoods) {
               const toInsert = analyzeHashtagsMoods.map(ele => ({
@@ -65,7 +85,6 @@ function create(body, params) {
                 hashtagAnalysis: ele.response,
                 hashtag: ele.target
               }))
-              // return analyzeHashtagsMoods
               return db('hashtags').insert(toInsert)
           })
         }
@@ -74,10 +93,12 @@ function create(body, params) {
         }
     })
     .then(function() {
-      if (usernames) {
-        var userNamePromise = usernames.map(username => lib.twitterSearchUser(username))
+      if (usernames && usernames.length !== 0) {
+        console.log('usernames', usernames);
+        var userNamePromise = usernames.map(username => lib.twitterSearchUser(username.trim()))
         return Promise.all(userNamePromise)
           .then(function(analyzeUsernameMoods) {
+              console.log(analyzeUsernameMoods.target)
               const toInsert = analyzeUsernameMoods.map(ele => ({
                 campaigns_id: campaignsId,
                 usernameAnalysis: ele.response,
