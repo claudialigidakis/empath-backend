@@ -7,7 +7,8 @@
     "dev": "nodemon ./server/app.js",
     "knex": "knex",
     "latest": "knex migrate:latest",
-    "rollback": "knex migrate:rollback"
+    "rollback": "knex migrate:rollback",
+    "heroku-postbuild": "npm install --production"
   },
   "engines": {
     "node": "v9.11.1",
