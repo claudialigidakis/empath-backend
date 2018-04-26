@@ -47,7 +47,8 @@ function remove(campaignsId, usersId) {
   return (
     db('followed_campaigns')
     .where({
-      'followed_campaigns.campaigns_id': campaignsid
+      'followed_campaigns.campaigns_id': campaignsid,
+      'followed_campaigns.user_id': usersid
     })
     .del()
   )
