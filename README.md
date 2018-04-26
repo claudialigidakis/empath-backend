@@ -17,10 +17,10 @@ NPM RUN DEV
 
 ## Built With
 
-* [Javascript]
-* [Watson Personality API]
-* [Twitter API]
-* [NODE]
+* Javascript
+* Watson Personality API
+* Twitter API
+* NODE
 
 ## Authors
 
