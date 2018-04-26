@@ -9,6 +9,14 @@ function getOneByUserName(username){
   )
 }
 
+function getUserbyUsername(username){
+  return (
+    db('users')
+    .where({ username })
+    .first()
+  )
+}
+
 function getOne(usersId){
   return (
     db('users')
@@ -54,4 +62,4 @@ function remove(usersId){
   )
 }
 
-module.exports = {getOne, getOneByUserName, create, remove}
+module.exports = {getOne, getOneByUserName, create, remove, getUserbyUsername}

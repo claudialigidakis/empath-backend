@@ -9,8 +9,6 @@ function getOne(campaignsId, usersId) {
   return (
     db('followed_campaigns')
     .innerJoin('campaigns', 'campaigns.id', 'followed_campaigns.campaigns_id')
-    // .leftJoin('hashtags', 'hashtags.campaigns_id', 'followed_campaigns.campaigns_id')
-    // .leftJoin('usernames', 'usernames.campaigns_id', 'followed_campaigns.campaigns_id')
     .where({
       'followed_campaigns.campaigns_id': campaignsid,
       'followed_campaigns.user_id': usersid
@@ -56,6 +54,22 @@ function remove(campaignsId, usersId) {
 }
 
 
+function AddUser(params){
+  console.log("entered models")
+  console.log(params)
+  let userid = params.userId
+  let campaignsId = params.campaignsId
+    console.log(userid, campaignsId)
+  return db('followed_campaigns')
+    .insert({
+      is_owner: false,
+      user_id: userid,
+      campaigns_id: campaignsId
+    })
+    .returning('*')
+}
+
+
 function create(body, params) {
   let title = body.title
   let description = body.description
@@ -76,7 +90,6 @@ function create(body, params) {
     .then(function([campaign]) {
       campaignsId = campaign.id
       if (hashtags && hashtags.length !== 0) {
-        console.log('hashtags', hashtags);
         var hashtagsPromise = hashtags.map(hashtag => lib.twitterSearchHashtag(hashtag.trim()))
         return Promise.all(hashtagsPromise)
           .then(function(analyzeHashtagsMoods) {
@@ -94,11 +107,9 @@ function create(body, params) {
     })
     .then(function() {
       if (usernames && usernames.length !== 0) {
-        console.log('usernames', usernames);
         var userNamePromise = usernames.map(username => lib.twitterSearchUser(username.trim()))
         return Promise.all(userNamePromise)
           .then(function(analyzeUsernameMoods) {
-              console.log(analyzeUsernameMoods.target)
               const toInsert = analyzeUsernameMoods.map(ele => ({
                 campaigns_id: campaignsId,
                 usernameAnalysis: ele.response,
@@ -113,7 +124,6 @@ function create(body, params) {
         }
     })
     .then(function() {
-      console.log("made it to the end of models")
       return db('followed_campaigns')
         .insert({
           is_owner: true,
@@ -129,5 +139,6 @@ module.exports = {
   getOne,
   getAll,
   create,
-  remove
+  remove,
+  AddUser
 }

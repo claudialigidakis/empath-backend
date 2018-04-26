@@ -26,15 +26,31 @@ function create(req, res, next){
   if(!req.body.title || !req.body.description){
     return next({ status: 400, message:'Bad Request'})
   }
-  model.create(req.body, req.params)
-  .then(function(data){
-      console.log("made it back to create")
-      res.status(201).send({ data })
-  })
+    model.create(req.body, req.params)
+    .then(function(data){
+        console.log("made it back to create")
+        res.status(201).send({ data })
+    })
   .catch(err => {
     console.log(err);
     return next(err);
   })
+}
+
+function AddUser(req, res, next) {
+  console.log("enteredAddUser controller")
+  if(!req.params){
+    return next({ status: 400, message:'Bad Request'})
+  }
+  model.AddUser(req.params)
+  .then(data => {
+    console.log("returned add user")
+    res.status(201).send({ data })
+  })
+  .catch(err => {
+    console.log(err);
+    return next(err);
+})
 }
 
 function remove(req, res, next){
@@ -46,4 +62,4 @@ function remove(req, res, next){
   .catch(next)
 }
 
-module.exports = {getOne, getAll, create, remove}
+module.exports = {getOne, getAll, create, remove, AddUser}

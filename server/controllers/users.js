@@ -14,6 +14,17 @@ function getOne(req, res, next){
 }
 
 
+function getUserbyUsername(req, res, next){
+  if(!req.params.reqUser) {
+  return next({ status: 400, message:'Bad Request'})
+}
+  userModel.getUserbyUsername(req.params.reqUser)
+  .then(data => {
+    res.status(200).send({ data })
+  })
+  .catch(next)
+}
+
 function create(req, res, next){
   if(!req.body.username || !req.body.password || !req.body.fname || !req.body.lname || !req.body.email){
     return next({ status: 400, message: 'Missing user creation fields'})
@@ -47,4 +58,4 @@ function remove(req, res, next){
   .catch(next)
 }
 
-module.exports = {getOne, create, update, remove}
+module.exports = {getOne, create, update, remove, getUserbyUsername}
