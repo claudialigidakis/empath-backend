@@ -48,9 +48,11 @@ Also, be sure to have `git` available in your PATH, `npm` might need it.
 
 ## Install
 
-    $ git clone https://github.com/ORG/PROJECT.git
-    $ cd PROJECT
+    $ git clone https://github.com/Empath---Back-End
+    $ cd Empath---Back-End
     $ npm install
+    $ createdb empath_dev
+    $ knex migrations:latest
 
 ### Configure app
 
