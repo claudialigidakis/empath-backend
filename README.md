@@ -75,19 +75,6 @@ Copy `config.sample.json` to `config.json` then edit it with the url where you h
 - [Browserify](http://browserify.org/) to handle allow us to write our client-side scripts with [es6 syntax](http://es6.github.io/) thanks to [es6ify](https://github.com/thlorenz/es6ify).
 - [React](http://facebook.github.io/react) is used for UI.
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Installing
-
-A step by step series of examples that tell you have to get a development env running
-
-```
-NPM INSTALL
-NPM RUN DEV
-```
-
 ## Built With
 
 * Javascript
